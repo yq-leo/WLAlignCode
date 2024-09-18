@@ -154,6 +154,7 @@ def writeFile(out_emb,network, ouput_filename_network,pix):
     f.flush()
     f.close()
 
+
 def record_embedding(out_emb,network):
     vectors = out_emb
     embedding_dict=dict()
@@ -162,7 +163,8 @@ def record_embedding(out_emb,network):
         embedding_dict[v]=value
     return embedding_dict
 
-def readData(file_name, pix, anchor, graph ,graph_another):
+
+def readData(file_name, pix, anchor, graph ,graph_another, edge_noise=0):
 
     with open(file_name, 'r', encoding='gbk', errors='ignore') as f:
         for line in f:
@@ -232,9 +234,9 @@ def read_graph(filex,filey,anchor_file):
     graph_t=nx.DiGraph()
 
     anchor_list = getAnchors(graph,anchor_file)
-    readData(networkx_file, "_foursquare", anchor_list, graph ,graph_f)
-    readData(networky_file, "_twitter", anchor_list, graph ,graph_t)
-    return graph,graph_f,graph_t,anchor_list
+    readData(networkx_file, "_foursquare", anchor_list, graph, graph_f)
+    readData(networky_file, "_twitter", anchor_list, graph, graph_t)
+    return graph, graph_f, graph_t, anchor_list
 
 def read_graph_one(file,pix):
     '''

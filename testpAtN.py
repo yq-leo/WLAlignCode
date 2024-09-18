@@ -74,7 +74,9 @@ def getpAtN_Revers(network_y, network_x,anchor_list,test_file):
         line = f_test.readline()
         i += 1
     f_test.close()
-    return pAtN_y_map,all
+    return pAtN_y_map, all
+
+
 def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky_file,anchor_file,test_file):
     networkx_file = networkx_file
     networky_file = networky_file
@@ -86,10 +88,10 @@ def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky
 
     nx_G, G_f, G_t, anchor_list = read_graph(networkx_file, networky_file)
 
-    network_x=dict()
-    network_y=dict()
+    network_x = dict()
+    network_y = dict()
 
-    line=f_networkx.readline()
+    line = f_networkx.readline()
     while line:
         listx = []
         line=line.replace("|\n","")
@@ -147,6 +149,15 @@ def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky
     print(all)
     for i in range(30):
         print(i,':',(a[i]+b[i])/2,end=', ')
+
+    ranks1 = np.array(list(map_x.values()))
+    ranks2 = np.array(list(map_y.values()))
+    mrr1 = np.mean(1.0 / (ranks1 + 1))
+    mrr2 = np.mean(1.0 / (ranks2 + 1))
+    print('-' * 50)
+    print('MRR:', (mrr1 + mrr2)/2)
+
+
 def change2tensor(list):
     list = torch.Tensor(list)
     list = list.squeeze()

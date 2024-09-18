@@ -33,11 +33,13 @@ BATCHS=100
 N_SAMPLES = 20
 LR=0.005
 LR4Struct=0.005
-device = 'cuda:1'
+device = 'cpu'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='pe', help='dataset name.')
-parser.add_argument('--ratio', type=int, default=5, help='training ratio')
+parser.add_argument('--ratio', type=int, default=2, help='training ratio')
+parser.add_argument('--edge_noise', type=float, default=0.0, help='edge noise')
+parser.add_argument('--attr_noise', type=float, default=0.0, help='attribute noise')
 args = parser.parse_args()
 
 data_file=args.dataset
@@ -48,12 +50,12 @@ ouput_filename_networky, \
 networkx_file, \
 networky_file, \
 anchor_file, \
-test_file = get_data(ratio,data_file)
+test_file = get_data(ratio, data_file)
 
 
 
 #Read network and related structure data
-nx_G,G_f,G_t,anchor_list= read_graph(networkx_file,networky_file,anchor_file)
+nx_G, G_f, G_t, anchor_list = read_graph(networkx_file, networky_file, anchor_file)
 graph_B=nx.DiGraph()
 
 G_anchor=get_graph_anchor(nx_G)
