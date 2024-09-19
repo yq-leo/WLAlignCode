@@ -77,7 +77,7 @@ def getpAtN_Revers(network_y, network_x,anchor_list,test_file):
     return pAtN_y_map, all
 
 
-def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky_file,anchor_file,test_file):
+def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky_file,anchor_file,test_file, edge_noise=0, record=False):
     networkx_file = networkx_file
     networky_file = networky_file
 
@@ -157,6 +157,13 @@ def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky
     print('-' * 50)
     print('MRR:', (mrr1 + mrr2)/2)
 
+    top_k = [1, 5, 10, 30, 50, 100]
+    hits = dict()
+    for k in top_k:
+        hits[k] = (a[k-1] + b[k-1]) / 2
+    mrr = (mrr1 + mrr2) / 2
+    return hits, mrr
+
 
 def change2tensor(list):
     list = torch.Tensor(list)
@@ -222,12 +229,42 @@ def read_graph(filex,filey):
     anchor_list = getAnchors(graph,anchor_file)
     readData(networkx_file, "_foursquare", anchor_list, graph ,graph_f)
     readData(networky_file, "_twitter", anchor_list, graph ,graph_t)
-    return graph,graph_f,graph_t,anchor_list
+    return graph, graph_f, graph_t, anchor_list
+
+
+def test_performance(dataset, ratio, edge_noise=0):
+    data_file = dataset
+    # File parameters
+    ouput_filename_networkx, \
+    ouput_filename_networky, \
+    networkx_file, \
+    networky_file, \
+    anchor_file, \
+    test_file = get_data(ratio, data_file)
+
+    hits, mrr = test(ouput_filename_networkx, ouput_filename_networky, networkx_file, networky_file, anchor_file, test_file)
+
+    return hits, mrr
+
+
+def rm_out(arr):
+    """
+    Remove outliers from an array
+    :param arr: input array
+    :return:  without outliers
+    """
+    arr = np.sort(np.array(arr))
+    if len(arr) <= 3:
+        return arr
+    num_rm = len(arr) // 2
+    return arr[int(num_rm / 2) + num_rm % 2: -(num_rm // 2)]
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, default='pe', help='dataset name.')
+    parser.add_argument('--dataset', type=str, default='phone-email', help='dataset name.', choices=['ACM-DBLP', 'Foursquare-Twitter', 'phone-email'])
     parser.add_argument('--ratio', type=int, default=5, help='training ratio')
+    parser.add_argument('--edge_noise', type=float, default=0.0, help='edge noise')
     args = parser.parse_args()
 
     data_file = args.dataset
@@ -240,4 +277,4 @@ if __name__ == '__main__':
     anchor_file, \
     test_file = get_data(ratio, data_file)
 
-    test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky_file,anchor_file,test_file)
+    test(ouput_filename_networkx, ouput_filename_networky, networkx_file, networky_file, anchor_file, test_file)

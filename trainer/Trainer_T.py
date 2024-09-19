@@ -23,7 +23,7 @@ class Trainer_T:
         self.model=EmbeddingModel(len(network.vocab2int), EMBEDDING_DIM).to(device)
 
     def train_anchor(self,network,all_candate, all_closure,layer_label,mark_pair,ouput_filename_networkx,ouput_filename_networky,epoches=None):
-        device = 'cpu'
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # network.reset_graph(all_candate)
         acc_list=[]
         # network.set_closure_mark(all_candate, all_closure)
