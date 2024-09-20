@@ -67,7 +67,7 @@ ouput_filename_networkx, \
 edge_noise = args.edge_noise
 attr_noise = args.attr_noise
 
-top_k = [1, 5, 10, 30, 50, 100]
+top_k = [1, 5, 10, 30]
 hits_list = defaultdict(list)
 mrr_list = list()
 
@@ -202,5 +202,5 @@ if args.record:
         writer = csv.writer(f)
         header = f"{args.dataset}_({args.edge_noise:.1f})"
         writer.writerow(
-            [header] + [f"{p:.3f}" for p in hits_mean] + [f"{mrr_mean:.3f}"] + [f"{p:.3f}" for p in hits_std] + [
-                f"{mrr_std:.3f}"])
+            [header] + [f"{hits_mean[k]:.3f}" for k in top_k] + [f"{mrr_mean:.3f}"] + [f"{hits_std[k]:.6f}" for k in top_k] + [
+                f"{mrr_std:.6f}"])

@@ -35,8 +35,8 @@ def get_mark_node(layers_embedding,network):
     idx2t_n = np.max(F2T.cpu().detach().numpy(), axis=1)
     idx2f_n = np.max(T2F.cpu().detach().numpy(), axis=1)
     print()
-    print(idx2f_n)
-    print(idx2t_n)
+    # print(idx2f_n)
+    # print(idx2t_n)
 
     allign_list1 = []
     allign_list2 = []
@@ -84,9 +84,9 @@ def get_candate_pair(layers_embedding,network):
     idx2f = np.argmax(T2F.cpu().detach().numpy(), axis=1)
     idx2t_n = np.max(F2T.cpu().detach().numpy(), axis=1)
     idx2f_n = np.max(T2F.cpu().detach().numpy(), axis=1)
-    print()
-    print(idx2f_n)
-    print(idx2t_n)
+    # print()
+    # print(idx2f_n)
+    # print(idx2t_n)
     for i in range(len(idx2t_n)):
         F2T[i][idx2t[i]]=0
     for i in range(len(idx2f_n)):
@@ -156,7 +156,7 @@ def get_candate_pair_new(layers_embedding,network):
     idx2f = np.argmax(T2F.cpu().detach().numpy(), axis=1)
     idx2t_n = np.max(F2T.cpu().detach().numpy(), axis=1)
     idx2f_n = np.max(T2F.cpu().detach().numpy(), axis=1)
-    print()
+    # print()
     # print(idx2f_n)
     # print(idx2t_n)
     for i in range(len(idx2t_n)):
@@ -221,9 +221,9 @@ def get_candate_pair_self(layers_embedding,network):
     idx2f = np.argmax(F2F.cpu().detach().numpy(), axis=1)
     idx2t_n = np.max(T2T.cpu().detach().numpy(), axis=1)
     idx2f_n = np.max(F2F.cpu().detach().numpy(), axis=1)
-    print()
-    print(idx2f_n)
-    print(idx2t_n)
+    # print()
+    # print(idx2f_n)
+    # print(idx2t_n)
     for i in range(len(idx2t_n)):
         T2T[i][idx2t[i]]=0
     for i in range(len(idx2f_n)):

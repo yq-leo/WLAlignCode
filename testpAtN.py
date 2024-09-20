@@ -157,7 +157,7 @@ def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky
     print('-' * 50)
     print('MRR:', (mrr1 + mrr2)/2)
 
-    top_k = [1, 5, 10, 30, 50, 100]
+    top_k = [1, 5, 10, 30]
     hits = dict()
     for k in top_k:
         hits[k] = (a[k-1] + b[k-1]) / 2
