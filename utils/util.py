@@ -254,7 +254,7 @@ def remove_node(nx_G):
     return nx_G
 
 
-def read_graph(filex,filey,anchor_file, edge_noise, attr_noise):
+def read_graph(filex,filey,anchor_file, edge_noise, attr_noise=0):
     '''
     Reads the input network in networkx.
     '''
@@ -268,6 +268,7 @@ def read_graph(filex,filey,anchor_file, edge_noise, attr_noise):
     readData(networkx_file, "_foursquare", anchor_list, graph, graph_f, edge_noise)
     readData(networky_file, "_twitter", anchor_list, graph, graph_t, edge_noise)
     return graph, graph_f, graph_t, anchor_list
+
 
 def read_graph_one(file,pix):
     '''

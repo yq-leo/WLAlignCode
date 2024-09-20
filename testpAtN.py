@@ -86,7 +86,7 @@ def test(ouput_filename_networkx,ouput_filename_networky,networkx_file, networky
     f_networkx = open(ouput_filename_networkx + ".number_T")
     f_networky = open(ouput_filename_networky + ".number_T")
 
-    nx_G, G_f, G_t, anchor_list = read_graph(networkx_file, networky_file)
+    nx_G, G_f, G_t, anchor_list = read_graph(networkx_file, networky_file, anchor_file, edge_noise)
 
     network_x = dict()
     network_y = dict()
@@ -171,15 +171,14 @@ def change2tensor(list):
     list = Variable(list)
     return list
 
-def readData(file_name, pix, anchor, graph ,graph_another):
-
+def readData(file_name, pix, anchor, graph, graph_another, edge_noise=0):
     with open(file_name, 'r', encoding='gbk', errors='ignore') as f:
         for line in f:
             array_edge = line.split(" ", 1)
 
             array_edge[1] = array_edge[1].replace("\n", "")
             array_edge_0 = array_edge[0] + pix
-            array_edge_1 = array_edge[0] + pix
+            array_edge_1 = array_edge[1] + pix
             if array_edge[0] in anchor:
                 array_edge[0] += '_anchor'
             else:
@@ -197,7 +196,38 @@ def readData(file_name, pix, anchor, graph ,graph_another):
             graph_another.add_node(array_edge_1)
             graph_another.add_edge(array_edge_0, array_edge_1, weight=1)
 
+    num_edges = len(graph_another.edges())
+    num_perturb_edges = int(num_edges * edge_noise)
+    cnt = 0
+    while cnt < num_perturb_edges:
+        u = random.choice(list(graph_another.nodes()))
+        v = random.choice(list(graph_another.nodes()))
+        u_g, v_g = u.replace(pix, ''), v.replace(pix, '')
+        if u_g in anchor:
+            u_g += '_anchor'
+        else:
+            u_g += pix
+        if v_g in anchor:
+            v_g += '_anchor'
+        else:
+            v_g += pix
+
+        if graph_another.has_edge(u, v):
+            graph_another.remove_edge(u, v)
+            graph.remove_edge(u_g, v_g)
+            if not nx.is_weakly_connected(graph_another) or not nx.is_weakly_connected(graph):
+                graph_another.add_edge(u, v, weight=1)
+                graph.add_edge(u_g, v_g, weight=1)
+            else:
+                cnt += 1
+
+        else:
+            graph_another.add_edge(u, v, weight=1)
+            graph.add_edge(u_g, v_g, weight=1)
+            cnt += 1
+
     del anchor
+
     f.close()
 
 
@@ -216,19 +246,19 @@ def getAnchors(network,anchor_file):
     return answer_list
 
 
-def read_graph(filex,filey):
+def read_graph(filex,filey,anchor_file, edge_noise, attr_noise=0):
     '''
     Reads the input network in networkx.
     '''
     networkx_file = filex
     networky_file = filey
     graph = nx.DiGraph()
-    graph_f=nx.DiGraph()
-    graph_t=nx.DiGraph()
+    graph_f = nx.DiGraph()
+    graph_t = nx.DiGraph()
 
-    anchor_list = getAnchors(graph,anchor_file)
-    readData(networkx_file, "_foursquare", anchor_list, graph ,graph_f)
-    readData(networky_file, "_twitter", anchor_list, graph ,graph_t)
+    anchor_list = getAnchors(graph, anchor_file)
+    readData(networkx_file, "_foursquare", anchor_list, graph, graph_f, edge_noise)
+    readData(networky_file, "_twitter", anchor_list, graph, graph_t, edge_noise)
     return graph, graph_f, graph_t, anchor_list
 
 

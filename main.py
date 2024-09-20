@@ -43,6 +43,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='pe', help='dataset name.')
+parser.add_argument('--epochs', type=int, default=100, help='number of epochs')
 parser.add_argument('--ratio', type=int, default=2, help='training ratio')
 parser.add_argument('--edge_noise', type=float, default=0.0, help='edge noise')
 parser.add_argument('--attr_noise', type=float, default=0.0, help='attribute noise')
@@ -108,7 +109,9 @@ for run in range(args.runs):
     acc_list = []
 
     # Training process
-    while (True):
+    iter = 0
+    while True:
+        print('iter:', iter)
         print(len(network.vocab2int))
         # Initialize aggregate function and node label
         agg_model = AggregateLabel(len(network.vocab2int), len(network.vocab2int), device).to(device)
@@ -149,6 +152,7 @@ for run in range(args.runs):
             print(network.is_mark_finished())
             network.reset_edges(candate_pair, get_graph_anchorBy_mark, candate_pair_self)
             num_mark = network.num_mark()
+            iter += 1
             continue
         else:
             num_mark = network.num_mark()
@@ -167,7 +171,7 @@ for run in range(args.runs):
             writeFile(embedding_T, network_all, ouput_filename_networky + ".number_T", "_twitter")
 
             break
-    print('finished!')
+    print(f'finished! number of iterations: {iter}')
 
     # Test performance
     hits, mrr = test_performance(data_file, ratio, edge_noise)
