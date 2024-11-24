@@ -202,5 +202,5 @@ if args.record:
         writer = csv.writer(f)
         header = f"{args.dataset}_({args.edge_noise:.1f})"
         writer.writerow(
-            [header] + [f"{hits_mean[k]:.3f}" for k in top_k] + [f"{mrr_mean:.3f}"] + [f"{hits_std[k]:.6f}" for k in top_k] + [
+            [header] + [f"{hits_mean[k]:.4f}" for k in top_k] + [f"{mrr_mean:.4f}"] + [f"{hits_std[k]:.6f}" for k in top_k] + [
                 f"{mrr_std:.6f}"])
